@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "OnlineJobs.ph Helper",
+  "version": "1.0",
+  "description": "Copy content from onlinejobs.ph for application spreadsheets.",
+  "permissions": ["activeTab", "clipboardWrite"],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "images/icon.png",
+      "48": "images/icon.png",
+      "128": "images/icon.png"
+    }
+  },
+  "icons": {
+    "16": "images/icon.png",
+    "48": "images/icon.png",
+    "128": "images/icon.png"
+  },
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://www.onlinejobs.ph/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
