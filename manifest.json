@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "OnlineJobs.ph Job Detais Extractor",
+  "name": "OnlineJobs.ph Job Details Extractor",
   "version": "1.0",
   "description": "Copy content from onlinejobs.ph for application spreadsheets.",
   "permissions": ["activeTab", "scripting", "clipboardWrite"],
