@@ -28,7 +28,7 @@ function getJobDetails() {
   let jobTitle = document.querySelector('body > section.bg-primary.section-perks.pt-4 > div > div > div > h1')?.innerText || "";
   let hoursPerWeek = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p')?.innerText || "";
   let salaryUpTo = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p')?.innerText || "";
-  let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0 > div > div:nth-child(4) > div > div > div.card-body").innerText; 
+  let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0 > div > div:nth-child(4) > div > div > div.card-body")?.innerText || ""; 
     function removeAfterLineBreak(inputString) {
         let parts = inputString.split('\n');
         return parts[0];
