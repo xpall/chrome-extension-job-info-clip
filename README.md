@@ -9,7 +9,7 @@ An extremely simple Chrome extension to assist job hunters on onlinejobs.ph by s
 
 ## How to Use
 
-1. Install the extension in Chrome (currently still under review as of June 08, 2024).
+1. Install the extension in Chrome [from this link](https://chromewebstore.google.com/detail/onlinejobsph-job-details/mppkpknfccgbmhhddljakcgeckbphhjf?authuser=0&hl=en).
 2. Navigate to a job posting on onlinejobs.ph.
 3. Click the extension icon in the Chrome toolbar.
 4. Click the "Copy Job Details" button in the popup.
