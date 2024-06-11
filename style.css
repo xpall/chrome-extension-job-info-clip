@@ -1,11 +1,26 @@
+body {
+  width: 220px;
+  height: 330px;
+  background-color: #1b1b23;
+}
+
+.button-container {
+  display: flex;
+}
+
 #copyButton {
   background-color: #d9eee1;
-  width: 100px;
+  width: 200px;
   height: 100px;
-  border-radius: 20%;
+  border-radius: 20px;
+  margin: auto;
   }
 
 #copyButton:hover{
   background-color: #04aa6d;
+  color: white;
+}
+
+p {
   color: white;
 }

@@ -3,14 +3,24 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>OnlineJobs.ph Helper</title>
+  <title>Job Details Extractor</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="button-container">
-    <button id="copyButton">Extract Data</button>
+    <button id="copyButton">Extract Job Details</button>
   </div>
-
+  <div class="jobDetailsContainer">
+    <p>Job Title: <span id="jobTitle"></span></p>
+    <p>Hours: <span id="hours"></span></p>
+    <p>Compensation: <span id="compensation"></span></p>
+    <p>Contact: <span id="contactPerson"></span></p>
+    <p>Link: <span id="link"></span></p>
+    </div>
+    
+    <div class="footer">
+      <p>A very simple tool to extract job details from the job post.</p>
+    </div>
   <script src="popup.js"></script>
 </body>
 </html>
