@@ -21,32 +21,103 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
-
-
 // This function will be executed as a content script inside the current page
 function getJobDetails() {
-  let jobTitle = document.querySelector('body > section.bg-primary.section-perks.pt-4 > div > div > div > h1')?.innerText || "";
-  let hoursPerWeek = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p')?.innerText || "";
-  let salaryUpTo = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p')?.innerText || "";
-  let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0 > div > div:nth-child(4) > div > div > div.card-body")?.innerText || ""; 
-    function removeAfterLineBreak(inputString) {
-        let parts = inputString.split('\n');
-        return parts[0];
-    }
-    function removeContactPerson(inputString) {
-      let firstLine = inputString.replace('Contact Person: ', '');
-      return firstLine;
-    }
-  jobPoster = removeAfterLineBreak(jobPoster);
-  jobPoster = removeContactPerson(jobPoster);
-  
-  let jobLink = window.location.href;
-  
-  console.log(jobTitle);
-  console.log(hoursPerWeek);
-  console.log(salaryUpTo);
-  console.log(jobPoster);
-  console.log(jobLink)
+  let platform = window.location.href;
+  if ((/^https:\/\/www\.onlinejobs\.ph\/jobseekers\/job\/.*/).test(platform)) {
+    return isFromOLJ();
+  }
+  else if ((/^https:\/\/ph.indeed.com\/*/).test(platform)) {
+  return isFromIndeed();
+  }
 
-  return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
-}
+
+
+
+  function isFromOLJ() {
+    let jobTitle = document.querySelector('body > section.bg-primary.section-perks.pt-4 > div > div > div > h1')?.innerText || "";
+    let hoursPerWeek = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p')?.innerText || "";
+    let salaryUpTo = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p')?.innerText || "";
+    let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0 > div > div:nth-child(4) > div > div > div.card-body")?.innerText || ""; 
+    function removeAfterLineBreak(inputString) {
+          let parts = inputString.split('\n');
+          return parts[0];
+          }
+          function removeContactPerson(inputString) {
+        let firstLine = inputString.replace('Contact Person: ', '');
+        return firstLine;
+        }
+      jobPoster = removeAfterLineBreak(jobPoster);
+      jobPoster = removeContactPerson(jobPoster);
+      
+    let jobLink = window.location.href;
+    
+    console.log(jobTitle);
+    console.log(hoursPerWeek);
+    console.log(salaryUpTo);
+    console.log(jobPoster);
+    console.log(jobLink)
+    
+    return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
+    }
+  function isFromIndeed() {
+    let jobTitle = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-bbq8li.eu4oa1w0 > h2")?.innerText || "";
+      function trimJobTitle(rawJobTitle) {
+        const trimmedJobTitle = rawJobTitle.replace("\n- job post", "");
+        return trimmedJobTitle;
+        }
+    let hoursPerWeek = document.querySelector("#jobDetailsSection > div > div.js-match-insights-provider-36vfsm.eu4oa1w0")?.innerText || "";
+        function extractHoursPerWeek(jobDetails) {
+            // Regex to match "Job type" and the line below it
+        const jobTypeRegex = /Job type\n([^\n]*)/;
+        // Regex to match "Shift and schedule" and the line below it
+        const shiftAndScheduleRegex = /Shift and schedule\n([^\n]*)/;
+
+        // Match the job type
+        const jobTypeMatch = jobDetails.match(jobTypeRegex);
+        // Match the shift and schedule
+        const shiftAndScheduleMatch = jobDetails.match(shiftAndScheduleRegex);
+
+        // Initialize the result
+        let result = '';
+
+        if (jobTypeMatch) {
+            result += jobTypeMatch[1].trim();
+        }
+
+        if (shiftAndScheduleMatch) {
+            if (result) {
+                result += " | ";
+            }
+            result += shiftAndScheduleMatch[1].trim();
+        }
+
+        return result;
+          }
+    let salaryUpTo = document.querySelector("#jobDetailsSection > div > div.js-match-insights-provider-36vfsm.eu4oa1w0")?.innerText || "";
+      function extractPayDetails(jobDetails) {
+        const payIndex = jobDetails.indexOf("Pay");
+        if (payIndex === -1) {
+            return "TBD";
+        }
+        const payDetails = jobDetails.substring(payIndex + 3).trim();
+        const endOfPayDetails = payDetails.indexOf("\n");
+        return endOfPayDetails === -1 ? payDetails : payDetails.substring(0, endOfPayDetails).trim();
+        }
+      
+    jobTitle = trimJobTitle(jobTitle);
+    hoursPerWeek = extractHoursPerWeek(hoursPerWeek);
+    let jobPoster = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.css-2wyr5j.eu4oa1w0 > div > div > div > div.css-1h46us2.eu4oa1w0 > div.css-hon9z8.eu4oa1w0 > span > a")?.innerText || ""; 
+    let jobLink = window.location.href;
+    salaryUpTo = extractPayDetails(salaryUpTo);
+    console.log(jobTitle);
+    console.log(hoursPerWeek);
+    console.log(salaryUpTo);
+    console.log(jobPoster);
+    console.log(jobLink)
+    
+    return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
+    }
+
+  }
+  
