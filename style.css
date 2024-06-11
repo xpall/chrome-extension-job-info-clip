@@ -1,7 +1,9 @@
 body {
-  width: 220px;
-  height: 330px;
+  width: 225px;
+  height: 400px;
   background-color: #1b1b23;
+  display: flex;
+  flex-direction: column;
 }
 
 .button-container {
@@ -21,6 +23,24 @@ body {
   color: white;
 }
 
-p {
+p, span {
   color: white;
+  text-wrap: wrap;
+  word-wrap: break-word;
+}
+
+#link {
+  font-size: 9px;
+}
+
+.jobDetailsContainer {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: auto;
+  justify-content: space-evenly;
+}
+
+.footer {
+  margin-top: auto;
+  margin-bottom: 0;
 }

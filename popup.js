@@ -145,29 +145,41 @@ function getJobDetails() {
 
   // ##### FROM UPWROK CODE BLOCK ##### //
   function isFromUpwork() {
-    let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1) > h4 > span")?.innerText || "";
-    let completeJobDetails = document.querySelector("#main > div.container > div:nth-child(4) > div > div")?.innerText || "";
-    let salaryUpTo = document.querySelector("body > div.job-details-slider.air3-fullscreen-element > div > div.air3-fullscreen-container.is-scrolled-top.is-scrolled-bottom > div")?.innerText || "";
-    salaryUpTo = salaryUpTo.replace("\n"," ")   
-        function extractSalaryUpTo(jobDetails) {
-          // Constructing the regex with the hardcoded "-price" constant
-          const priceRegex = /\b(\$[\d.]+)\b[^$]*-price/i;
+    let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1)").innerText || "";
+    jobTitle = jobTitle.split("\n")[0]
+    let completeJobDetails = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div")?.innerText || "";
 
-          const priceMatch = jobDetails.match(priceRegex);
-
-          let result = '';
-
-          if (priceMatch) {
-              result += priceMatch[1].trim();
+    // GET Project type
+      function extractProjectType(jobDetails) {
+      // Split the job details string into an array of lines
+      const lines = jobDetails.split('\n');
+      
+      // Loop through each line
+      for (const line of lines) {
+          // Check if the line contains "Project Type:"
+          if (line.includes('Project Type:')) {
+              // Return the line if found
+              return line.trim();
           }
-          return result;
-          }
+      }
+      
+      // Return null if "Project Type:" is not found
+      return null;
+       }
+    
+    // GET Compensation
+       function extractCompensation(jobDetails) {
+        return jobDetails.split('-price')[0]
+      }
+    let hoursPerWeek = extractProjectType(completeJobDetails).replace('Project Type: ', '');
 
-    let jobPoster = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.css-2wyr5j.eu4oa1w0 > div > div > div > div.css-1h46us2.eu4oa1w0 > div.css-hon9z8.eu4oa1w0 > span > a")?.innerText || ""; 
+    let salaryUpTo = extractCompensation(completeJobDetails)
+    salaryUpTo = salaryUpTo.substring(salaryUpTo.length - 20)
+    salaryUpTo = salaryUpTo.match(/[^\D.]+(?:\.\d*)?/g).join('');
+
+
+    let jobPoster = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section > div.cfe-ui-job-about-client.mt-7 > ul > li:nth-child(6)")?.innerText || "";
     let jobLink = window.location.href;
-    salaryUpTo = extractSalaryUpTo(salaryUpTo);
-    console.log(jobTitle);
-    console.log(hoursPerWeek);
     console.log(salaryUpTo);
     console.log(jobPoster);
     console.log(jobLink)
