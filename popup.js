@@ -178,7 +178,8 @@ function getJobDetails() {
     salaryUpTo = salaryUpTo.match(/[^\D.]+(?:\.\d*)?/g).join('');
 
 
-    let jobPoster = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section > div.cfe-ui-job-about-client.mt-7 > ul > li:nth-child(6)")?.innerText || "";
+    let jobPoster = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section")?.innerText || "";
+    jobPoster = jobPoster.substring(jobPoster.length - 35).split('\n')[1]
     let jobLink = window.location.href;
     console.log(salaryUpTo);
     console.log(jobPoster);
