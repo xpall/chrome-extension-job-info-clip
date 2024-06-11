@@ -66,20 +66,21 @@ function getJobDetails() {
       
     let jobLink = window.location.href;
     
-    console.log(jobTitle);
-    console.log(hoursPerWeek);
-    console.log(salaryUpTo);
-    console.log(jobPoster);
-    console.log(jobLink)
+    // console.log(jobTitle);
+    // console.log(hoursPerWeek);
+    // console.log(salaryUpTo);
+    // console.log(jobPoster);
+    // console.log(jobLink)
     
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
 
   // ##### FROM INDEED CODE BLOCK ##### //
   function isFromIndeed() {
-    let jobTitle = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-bbq8li.eu4oa1w0 > h2")?.innerText || "";
+    let jobTitle = document.querySelector("#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
+?.innerText || "";
       function trimJobTitle(rawJobTitle) {
-        const trimmedJobTitle = rawJobTitle.replace("\n- job post", "");
+        const trimmedJobTitle = rawJobTitle.split("\n")[0];
         return trimmedJobTitle;
         }
     let hoursPerWeek = document.querySelector("#jobDetailsSection > div > div.js-match-insights-provider-36vfsm.eu4oa1w0")?.innerText || "";
@@ -123,7 +124,14 @@ function getJobDetails() {
       
     jobTitle = trimJobTitle(jobTitle);
     hoursPerWeek = extractHoursPerWeek(hoursPerWeek);
-    let jobPoster = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.css-2wyr5j.eu4oa1w0 > div > div > div > div.css-1h46us2.eu4oa1w0 > div.css-hon9z8.eu4oa1w0 > span > a")?.innerText || ""; 
+    let jobPoster = document.querySelector("#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
+?.innerText || "";
+        function extractCompany(jobDetails) {
+        const trimmedContact = jobDetails.split("\n")[2];
+        return trimmedContact;        
+        }
+
+    jobPoster = extractCompany(jobPoster)
     let jobLink = window.location.href;
     salaryUpTo = extractPayDetails(salaryUpTo);
     console.log(jobTitle);
