@@ -23,13 +23,36 @@ document.addEventListener('DOMContentLoaded', function() {
         const insertCompensation = document.getElementById('compensation');
         const insertContactPerson = document.getElementById('contactPerson');
         const insertLink = document.getElementById('link');
+        // const insertPlatform = document.getElementById('activePlatform');
+
+        // Change active platform logo
+        const onlinejobs = document.getElementById("logoOLJ");
+        const indeed = document.getElementById("logoIndeed");
+        const upwork = document.getElementById("logoUpwork");
 
         insertJobTitle.innerText = data.job_title;
         insertHours.innerText = data.hours_per_week;
         insertCompensation.innerText = data.salary_up_to;
         insertContactPerson.innerText = data.job_poster;
         insertLink.innerText = data.job_link;
-        
+
+        // Extract platform name
+        const domainParts = (new URL(data.job_link)).hostname.split('.');
+        const platform = domainParts.includes('onlinejobs') ? 'onlinejobs' : domainParts.includes('upwork') ? 'upwork' : 'indeed';
+        // insertPlatform.innerText = platform;
+
+        // Set zIndex for the active logo
+        const platformLogos = {
+            upwork: upwork,
+            onlinejobs: onlinejobs,
+            indeed: indeed
+        };
+
+        // Reset zIndex
+        Object.values(platformLogos).forEach(logo => logo.style.zIndex = "0");
+
+        // Set zIndex for the active platform logo
+        platformLogos[platform].style.zIndex = "20";
       }
     });
   });
@@ -190,7 +213,7 @@ function getJobDetails() {
     }
   }
 
-
+  // ##### BUTTONS CODE BLOCK ##### //
 const contactAuthor = document.getElementById("contactAuthor");
 const reviewExtension = document.getElementById("reviewExtension");
 const getSpreadsheetTemplate = document.getElementById("spreadsheetTemplate");
@@ -210,3 +233,13 @@ function openNewTabReviewExtension() {
 function openNewTabGetSpreadsheetTemplate() {
   window.open("https://docs.google.com/spreadsheets/d/1BCd1tkmh_4Ia8SOq-MlVj1NimTvoomClr7FMOPm0Gzo/edit?gid=0#gid=0"), "_blank"
 }
+
+// function changeActiveLogo(tabId) {
+//   console.log(`TabID is ${tabId}`)
+//   const logoOLJ = document.getElementById("logoOLJ");
+//   const logoIndeed = document.getElementById("logoIndeed");
+//   const logoUpwork = document.getElementById("logoUpwork");
+//   const logoDefault = document.getElementById("logoDefault");
+
+
+// }
