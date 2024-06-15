@@ -2,6 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
   document.getElementById('copyButton').addEventListener('click', async function() {
     // Send a message to the content script to get the data
     let [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    
     chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: getJobDetails
@@ -188,3 +189,24 @@ function getJobDetails() {
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
   }
+
+
+const contactAuthor = document.getElementById("contactAuthor");
+const reviewExtension = document.getElementById("reviewExtension");
+const getSpreadsheetTemplate = document.getElementById("spreadsheetTemplate");
+
+contactAuthor.addEventListener("click", openNewTabContactAuthor);
+reviewExtension.addEventListener("click", openNewTabReviewExtension);
+getSpreadsheetTemplate.addEventListener("click", openNewTabGetSpreadsheetTemplate);
+
+function openNewTabContactAuthor() {
+  window.open("https://www.johnlloyd.dev/#contact", "_blank")
+};
+
+function openNewTabReviewExtension() {
+  window.open("https://chromewebstore.google.com/detail/onlinejobsph-job-details/mppkpknfccgbmhhddljakcgeckbphhjf?authuser=0&hl=en", "_blank")
+}
+
+function openNewTabGetSpreadsheetTemplate() {
+  window.open("https://docs.google.com/spreadsheets/d/1BCd1tkmh_4Ia8SOq-MlVj1NimTvoomClr7FMOPm0Gzo/edit?gid=0#gid=0"), "_blank"
+}

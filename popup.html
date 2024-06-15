@@ -8,19 +8,31 @@
 </head>
 <body>
   <div class="button-container">
-    <button id="copyButton">Extract Job Details</button>
+    <button id="copyButton">
+      <span>
+        <img src="images/extension-upwork.png" class="platformLogo" id="upworkLogo">
+        <img src="images/extension-indeed.png" class="platformLogo" id="indeedLogo">
+        <img src="images/extension-olj.png" class="platformLogo" id="oljLogo">
+        <img src="images/extension-default.png" class="platformLogo" id="upworkLogo">
+      </span>Extract and Copy Details
+    </button>
   </div>
   <div class="jobDetailsContainer">
-    <p>Job Title: <span id="jobTitle"></span></p>
-    <p>Hours: <span id="hours"></span></p>
-    <p>Compensation: <span id="compensation"></span></p>
-    <p>Contact: <span id="contactPerson"></span></p>
-    <p>Link: <span id="link"></span></p>
+    <p><strong>Job Title: </strong><span id="jobTitle">• this is a very long text to test if ellipsis will work with overflow</span></p>
+    <p><strong>Hours: </strong><span id="hours">•</span></p>
+    <p><strong>Compensation: </strong><span id="compensation">•</span></p>
+    <p><strong>Contact: </strong><span id="contactPerson">•</span></p>
+    <p><strong>Link: </strong><span id="link">•</span></p>
     </div>
     
     <div class="footer">
-      <p>A very simple tool that extracts job details from the job post.</p>
-      <p>Can extract data form OLJ, Indeed, and Upwork</p>
+      <div class="footerContainer">
+        <button id="contactAuthor">Contact author</button>
+        <button id="reviewExtension">Rate this extension</button>
+      </div>
+      <button id="spreadsheetTemplate">Spreadsheet Template</button>
+      <!-- <p>A very simple tool that extracts job details from the job post.</p>
+      <p>Can extract data form OLJ, Indeed, and Upwork</p> -->
     </div>
   <script src="popup.js"></script>
 </body>
