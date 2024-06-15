@@ -160,7 +160,7 @@ function getJobDetails() {
 
   // ##### FROM UPWROK CODE BLOCK ##### //
   function isFromUpwork() {
-    let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1)").innerText || "";
+    let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1)")?.innerText || "";
     jobTitle = jobTitle.split("\n")[0]
     let completeJobDetails = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div")?.innerText || "";
 
