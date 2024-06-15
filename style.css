@@ -1,6 +1,6 @@
 body {
   width: 225px;
-  height: 390px;
+  height: 400px;
   background-color: #1b1b23;
   display: flex;
   flex-direction: column;
@@ -72,12 +72,16 @@ p, span {
   display: flex;
 }
 
-.footerContainer > button {
+.footerContainer > button,
+.footer > button {
   border-radius: 5px;
   margin: 0 2px;
+  width: 100%;
+  margin-bottom: 3px;
 }
 
-.footerContainer > button:hover{
+.footerContainer > button:hover,
+.footer > button:hover {
   background-color: #04aa6d;
   color: white;
 }
