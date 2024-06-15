@@ -76,25 +76,19 @@ function getJobDetails() {
     let jobTitle = document.querySelector('body > section.bg-primary.section-perks.pt-4 > div > div > div > h1')?.innerText || "";
     let hoursPerWeek = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p')?.innerText || "";
     let salaryUpTo = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p')?.innerText || "";
-    let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0 > div > div:nth-child(4) > div > div > div.card-body")?.innerText || ""; 
-    function removeAfterLineBreak(inputString) {
-          let parts = inputString.split('\n');
-          return parts[0];
+    let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0")?.innerText || ""; 
+      function removeAfterLineBreak(inputString) {
+          let parts = inputString.split('Contact Person: ');
+          return parts[1];
           }
-          function removeContactPerson(inputString) {
-        let firstLine = inputString.replace('Contact Person: ', '');
+      function retainContactPersonName(inputString) {
+        let firstLine = inputString.split('\n')[0];
         return firstLine;
         }
       jobPoster = removeAfterLineBreak(jobPoster);
-      jobPoster = removeContactPerson(jobPoster);
-      
+      jobPoster = retainContactPersonName(jobPoster);
+      console.log(jobPoster)
     let jobLink = window.location.href;
-    
-    // console.log(jobTitle);
-    // console.log(hoursPerWeek);
-    // console.log(salaryUpTo);
-    // console.log(jobPoster);
-    // console.log(jobLink)
     
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
@@ -233,13 +227,3 @@ function openNewTabReviewExtension() {
 function openNewTabGetSpreadsheetTemplate() {
   window.open("https://docs.google.com/spreadsheets/d/1BCd1tkmh_4Ia8SOq-MlVj1NimTvoomClr7FMOPm0Gzo/edit?gid=0#gid=0"), "_blank"
 }
-
-// function changeActiveLogo(tabId) {
-//   console.log(`TabID is ${tabId}`)
-//   const logoOLJ = document.getElementById("logoOLJ");
-//   const logoIndeed = document.getElementById("logoIndeed");
-//   const logoUpwork = document.getElementById("logoUpwork");
-//   const logoDefault = document.getElementById("logoDefault");
-
-
-// }
