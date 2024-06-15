@@ -1,9 +1,9 @@
 {
   "manifest_version": 3,
-  "name": "OnlineJobs.ph Job Details Extractor",
+  "name": "JobInfoClip (OLJ, Indeed, Upwork)",
   "author": "contact@johnlloyd.dev",
   "version": "1.2.0",
-  "description": "Copy content from onlinejobs.ph for application spreadsheets.",
+  "description": "Copy content from job posts from various platforms for application spreadsheets.",
   "permissions": ["activeTab", "scripting", "clipboardWrite"],
   "action": {
     "default_popup": "popup.html",
