@@ -79,6 +79,7 @@ p, span {
 .footer > button:hover {
   background-color: #04aa6d;
   color: white;
+  font-weight: bold;
 }
 
 #spreadsheetTemplate {
