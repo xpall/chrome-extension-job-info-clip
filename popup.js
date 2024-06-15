@@ -101,7 +101,7 @@ function getJobDetails() {
 
   // ##### FROM INDEED CODE BLOCK ##### //
   function isFromIndeed() {
-    let jobTitle = document.querySelector("#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
+    let jobTitle = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
 ?.innerText || "";
       function trimJobTitle(rawJobTitle) {
         const trimmedJobTitle = rawJobTitle.split("\n")[0];
@@ -148,7 +148,7 @@ function getJobDetails() {
       
     jobTitle = trimJobTitle(jobTitle);
     hoursPerWeek = extractHoursPerWeek(hoursPerWeek);
-    let jobPoster = document.querySelector("#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
+    let jobPoster = document.querySelector("#jobsearch-ViewjobPaneWrapper > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0")
 ?.innerText || "";
         function extractCompany(jobDetails) {
         const trimmedContact = jobDetails.split("\n")[2];
