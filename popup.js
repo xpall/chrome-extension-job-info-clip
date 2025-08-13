@@ -264,49 +264,167 @@ function getJobDetails() {
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
 
-  // ##### FROM UPWORK CODE BLOCK ##### //
+  // ##### FROM UPWORK CODE BLOCK - UPDATED WITH NEW SELECTORS ##### //
   function isFromUpwork() {
-    let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1)")?.innerText || "";
-    jobTitle = jobTitle.split("\n")[0]
-    let completeJobDetails = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div")?.innerText || "";
+    // Helper function to evaluate XPath (needs to be redefined in this scope)
+    function getElementByXPath(xpath) {
+      return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
 
-    // GET Project type
-      function extractProjectType(jobDetails) {
-      // Split the job details string into an array of lines
+    // Helper function to try multiple selectors and return first successful result
+    function getElementWithFallbacks(selectors) {
+      for (let selector of selectors) {
+        let element = null;
+        if (selector.type === 'xpath') {
+          element = getElementByXPath(selector.value);
+        } else if (selector.type === 'css') {
+          element = document.querySelector(selector.value);
+        }
+        if (element && element.innerText && element.innerText.trim() !== '') {
+          return element;
+        }
+      }
+      return null;
+    }
+
+    // Job Title selectors (new primary selector + fallbacks)
+    let jobTitleSelectors = [
+      { type: 'xpath', value: '/html/body/div[4]/div/div/div/main/div[3]/div[4]/div/div/div[1]/div[1]/section[1]/h4/span' },
+      { type: 'css', value: '#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div:nth-child(1) > section:nth-child(1) > h4 > span' },
+      { type: 'css', value: 'span.flex-1[data-v-6dae415b]' },
+      { type: 'css', value: '.job-details-card h4 span' },
+      { type: 'css', value: 'h4 span.flex-1' }
+    ];
+    let jobTitleElement = getElementWithFallbacks(jobTitleSelectors);
+    let jobTitle = jobTitleElement?.innerText?.trim() || "";
+
+    // Get complete job details container for parsing other information
+    let completeJobDetailsSelectors = [
+      { type: 'css', value: '#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div' },
+      { type: 'css', value: '.job-details-card > div' },
+      { type: 'css', value: '#main .job-details-card > div:first-child' }
+    ];
+    let completeJobDetailsElement = getElementWithFallbacks(completeJobDetailsSelectors);
+    let completeJobDetails = completeJobDetailsElement?.innerText || "";
+
+    // Extract Project Type (Hours per week equivalent)
+    function extractProjectType(jobDetails) {
       const lines = jobDetails.split('\n');
       
-      // Loop through each line
       for (const line of lines) {
-          // Check if the line contains "Project Type:"
-          if (line.includes('Project Type:')) {
-              // Return the line if found
-              return line.trim();
-          }
+        if (line.includes('Project Type:')) {
+          return line.replace('Project Type: ', '').trim();
+        }
       }
       
-      // Return null if "Project Type:" is not found
-      return null;
-       }
-    
-    // GET Compensation
-       function extractCompensation(jobDetails) {
-        return jobDetails.split('-price')[0]
+      // Fallback: look for common project type patterns
+      const hourlyPattern = /\$\d+\.?\d*\/hr/;
+      const fixedPattern = /Fixed-price|One-time project/i;
+      
+      if (hourlyPattern.test(jobDetails)) {
+        return 'Hourly';
+      } else if (fixedPattern.test(jobDetails)) {
+        return 'Fixed-price';
       }
-    let hoursPerWeek = extractProjectType(completeJobDetails).replace('Project Type: ', '');
-
-    let salaryUpTo = extractCompensation(completeJobDetails)
-    salaryUpTo = salaryUpTo.substring(salaryUpTo.length - 20)
-    salaryUpTo = salaryUpTo.match(/[^\D.]+(?:\.\d*)?/g).join('');
-
-    let jobPoster = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section")?.innerText || "";
-    jobPoster = jobPoster.substring(jobPoster.length - 35).split('\n')[1]
-    let jobLink = window.location.href;
-    console.log(salaryUpTo);
-    console.log(jobPoster);
-    console.log(jobLink)
-    
-    return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
+      
+      return 'TBD';
     }
+
+    // Extract Compensation
+    function extractCompensation(jobDetails) {
+      // Look for price patterns
+      const hourlyRate = jobDetails.match(/\$\d+\.?\d*\/hr/);
+      const fixedPrice = jobDetails.match(/\$\d+(?:,\d{3})*/);
+      const budgetRange = jobDetails.match(/\$\d+(?:,\d{3})*\s*-\s*\$\d+(?:,\d{3})*/);
+      
+      if (budgetRange) {
+        return budgetRange[0];
+      } else if (hourlyRate) {
+        return hourlyRate[0];
+      } else if (fixedPrice) {
+        return '$' + fixedPrice[0].replace('$', '');
+      }
+      
+      // Fallback: extract any number that might be compensation
+      const numbers = jobDetails.match(/\$[\d,]+(?:\.\d+)?/g);
+      if (numbers && numbers.length > 0) {
+        return numbers[0];
+      }
+      
+      return 'TBD';
+    }
+
+    let hoursPerWeek = extractProjectType(completeJobDetails);
+    let salaryUpTo = extractCompensation(completeJobDetails);
+
+    // Extract Job Poster (client information)
+    let jobPosterSelectors = [
+      { type: 'css', value: '#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section' },
+      { type: 'css', value: '.sidebar.air3-card-sections > section' },
+      { type: 'css', value: '.job-details-card .sidebar section' }
+    ];
+    let jobPosterElement = getElementWithFallbacks(jobPosterSelectors);
+    let jobPosterRaw = jobPosterElement?.innerText || "";
+    
+    // Extract client name from sidebar content
+    let jobPoster = "";
+    if (jobPosterRaw) {
+      const lines = jobPosterRaw.split('\n').filter(line => line.trim() !== '');
+      // Look for a line that seems like a client name (usually after "Client" or similar)
+      for (let i = 0; i < lines.length; i++) {
+        const line = lines[i].trim();
+        if (line.includes('Client') && i + 1 < lines.length) {
+          jobPoster = lines[i + 1].trim();
+          break;
+        }
+        // Alternative: look for lines that don't contain common labels
+        if (line && 
+            !line.includes('$') && 
+            !line.includes('Payment verified') && 
+            !line.includes('reviews') && 
+            !line.includes('Rating') &&
+            !line.includes('Location') &&
+            line.length > 2 && 
+            line.length < 50) {
+          jobPoster = line;
+          break;
+        }
+      }
+    }
+    
+    // If still no poster found, try alternative extraction
+    if (!jobPoster && jobPosterRaw) {
+      const possibleNames = jobPosterRaw.match(/[A-Z][a-z]+\s+[A-Z][a-z]+/g);
+      if (possibleNames && possibleNames.length > 0) {
+        jobPoster = possibleNames[0];
+      } else {
+        // Fallback: use a cleaned version of the raw text
+        const cleanText = jobPosterRaw.replace(/\n+/g, ' ').trim();
+        const firstMeaningfulPart = cleanText.split(/\s{2,}/)[0];
+        if (firstMeaningfulPart && firstMeaningfulPart.length < 50) {
+          jobPoster = firstMeaningfulPart;
+        }
+      }
+    }
+
+    let jobLink = window.location.href;
+
+    // Log extracted data for debugging
+    console.log("Upwork Extracted Data:");
+    console.log("Job Title:", jobTitle);
+    console.log("Hours/Type:", hoursPerWeek);
+    console.log("Salary:", salaryUpTo);
+    console.log("Poster:", jobPoster);
+    console.log("Link:", jobLink);
+    
+    return { 
+      job_title: jobTitle, 
+      hours_per_week: hoursPerWeek, 
+      salary_up_to: salaryUpTo, 
+      job_poster: jobPoster, 
+      job_link: jobLink 
+    };
+  }
 }
 
 // ##### BUTTONS CODE BLOCK ##### //
