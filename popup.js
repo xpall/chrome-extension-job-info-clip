@@ -74,25 +74,116 @@ function getJobDetails() {
     return isFromUpwork();
   }
 
-  // ##### FROM OLJ CODE BLOCK - UPDATED WITH XPATH ##### //
+  // ##### FROM OLJ CODE BLOCK - UPDATED WITH XPATH AND FALLBACKS ##### //
   function isFromOLJ() {
     // Helper function to evaluate XPath (needs to be redefined in this scope)
     function getElementByXPath(xpath) {
       return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
     }
 
-    // Use XPath selectors for more reliable element selection
-    let jobTitleElement = getElementByXPath('/html/body/div/section[1]/div/div/div/h1');
-    let jobTitle = jobTitleElement?.innerText || "";
+    // Helper function to try multiple selectors and return first successful result
+    function getElementWithFallbacks(selectors) {
+      for (let selector of selectors) {
+        let element = null;
+        if (selector.type === 'xpath') {
+          element = getElementByXPath(selector.value);
+        } else if (selector.type === 'css') {
+          element = document.querySelector(selector.value);
+        }
+        if (element && element.innerText && element.innerText.trim() !== '') {
+          return element;
+        }
+      }
+      return null;
+    }
 
-    let hoursElement = getElementByXPath('/html/body/div/section[2]/div/div[1]/div/div/div[3]/dl/dd/p');
-    let hoursPerWeek = hoursElement?.innerText || "";
+    // Job Title selectors (primary XPath + CSS fallbacks)
+    let jobTitleSelectors = [
+      { type: 'xpath', value: '/html/body/div/section[1]/div/div/div/h1' },
+      { type: 'css', value: 'h1' },
+      { type: 'css', value: 'section.bg-primary h1' },
+      { type: 'css', value: '.section-perks h1' }
+    ];
+    let jobTitleElement = getElementWithFallbacks(jobTitleSelectors);
+    let jobTitle = jobTitleElement?.innerText?.trim() || "";
 
-    let salaryElement = getElementByXPath('/html/body/div/section[2]/div/div[1]/div/div/div[2]/dl/dd/p');
-    let salaryUpTo = salaryElement?.innerText || "";
+    // Hours selectors
+    let hoursSelectors = [
+      { type: 'xpath', value: '/html/body/div/section[2]/div/div[1]/div/div/div[3]/dl/dd/p' },
+      { type: 'css', value: 'body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p' },
+      { type: 'css', value: '.job-post dd p' }
+    ];
+    let hoursElement = getElementWithFallbacks(hoursSelectors);
+    let hoursPerWeek = hoursElement?.innerText?.trim() || "";
 
+    // Salary selectors
+    let salarySelectors = [
+      { type: 'xpath', value: '/html/body/div/section[2]/div/div[1]/div/div/div[2]/dl/dd/p' },
+      { type: 'css', value: 'body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p' },
+      { type: 'css', value: '.job-post dd p' }
+    ];
+    let salaryElement = getElementWithFallbacks(salarySelectors);
+    let salaryUpTo = salaryElement?.innerText?.trim() || "";
+
+    // Contact Person extraction with multiple strategies
+    let jobPoster = "";
+    
+    // Strategy 1: Try XPath for direct strong element
     let contactElement = getElementByXPath('/html/body/div/section[2]/div/div[3]/div/div/div[2]/p[1]/strong');
-    let jobPoster = contactElement?.innerText || "";
+    if (contactElement && contactElement.innerText) {
+      jobPoster = contactElement.innerText.trim();
+    }
+    
+    // Strategy 2: Look for paragraph with "Contact Person:" text and extract strong element
+    if (!jobPoster) {
+      let contactParagraphs = document.querySelectorAll('p.mb-2');
+      for (let p of contactParagraphs) {
+        if (p.innerText && p.innerText.includes('Contact Person:')) {
+          let strongElement = p.querySelector('strong');
+          if (strongElement) {
+            jobPoster = strongElement.innerText.trim();
+            break;
+          }
+        }
+      }
+    }
+    
+    // Strategy 3: Broader search for any element containing "Contact Person:"
+    if (!jobPoster) {
+      let allElements = document.querySelectorAll('*');
+      for (let element of allElements) {
+        if (element.innerText && element.innerText.includes('Contact Person:')) {
+          // Try to extract just the name after "Contact Person:"
+          let text = element.innerText;
+          let match = text.match(/Contact Person:\s*(.+?)(?:\n|$)/);
+          if (match && match[1]) {
+            jobPoster = match[1].trim();
+            break;
+          }
+          // Alternative: look for strong element within this element
+          let strongElement = element.querySelector('strong');
+          if (strongElement) {
+            jobPoster = strongElement.innerText.trim();
+            break;
+          }
+        }
+      }
+    }
+    
+    // Strategy 4: Fallback to old method if all else fails
+    if (!jobPoster) {
+      let oldContactElement = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0");
+      if (oldContactElement && oldContactElement.innerText) {
+        let text = oldContactElement.innerText;
+        if (text.includes('Contact Person:')) {
+          let parts = text.split('Contact Person: ');
+          if (parts[1]) {
+            let firstLine = parts[1].split('\n')[0];
+            jobPoster = firstLine.trim();
+          }
+        }
+      }
+    }
 
     let jobLink = window.location.href;
 
