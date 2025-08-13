@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "JobInfoClip (OLJ, Indeed, Upwork)",
   "author": "contact@johnlloyd.dev",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Copy content from job posts from various platforms for application spreadsheets.",
   "permissions": ["activeTab", "scripting", "clipboardWrite"],
   "action": {
