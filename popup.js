@@ -23,7 +23,6 @@ document.addEventListener('DOMContentLoaded', function() {
         const insertCompensation = document.getElementById('compensation');
         const insertContactPerson = document.getElementById('contactPerson');
         const insertLink = document.getElementById('link');
-        // const insertPlatform = document.getElementById('activePlatform');
 
         // Change active platform logo
         const onlinejobs = document.getElementById("logoOLJ");
@@ -39,7 +38,6 @@ document.addEventListener('DOMContentLoaded', function() {
         // Extract platform name
         const domainParts = (new URL(data.job_link)).hostname.split('.');
         const platform = domainParts.includes('onlinejobs') ? 'onlinejobs' : domainParts.includes('upwork') ? 'upwork' : 'indeed';
-        // insertPlatform.innerText = platform;
 
         // Set zIndex for the active logo
         const platformLogos = {
@@ -58,6 +56,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
 });
 
+// Helper function to evaluate XPath and return element
+function getElementByXPath(xpath) {
+  return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+}
+
 // This function will be executed as a content script inside the current page
 function getJobDetails() {
   let platform = window.location.href;
@@ -65,32 +68,44 @@ function getJobDetails() {
     return isFromOLJ();
   }
   else if ((/^https:\/\/ph.indeed.com\/*/).test(platform)) {
-  return isFromIndeed();
+    return isFromIndeed();
   }
   else if ((/^https:\/\/www.upwork.com\/*/).test(platform)) {
-  return isFromUpwork();
+    return isFromUpwork();
   }
 
-  // ##### FROM OLJ CODE BLOCK ##### //
+  // ##### FROM OLJ CODE BLOCK - UPDATED WITH XPATH ##### //
   function isFromOLJ() {
-    let jobTitle = document.querySelector('body > section.bg-primary.section-perks.pt-4 > div > div > div > h1')?.innerText || "";
-    let hoursPerWeek = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(3) > dl > dd > p')?.innerText || "";
-    let salaryUpTo = document.querySelector('body > section.bg-ltblue.pt-4.pt-lg-0 > div > div.card.job-post.shadow.mb-4.mb-md-0 > div > div > div:nth-child(2) > dl > dd > p')?.innerText || "";
-    let jobPoster = document.querySelector("body > section.bg-ltblue.pt-4.pt-lg-0")?.innerText || ""; 
-      function removeAfterLineBreak(inputString) {
-          let parts = inputString.split('Contact Person: ');
-          return parts[1];
-          }
-      function retainContactPersonName(inputString) {
-        let firstLine = inputString.split('\n')[0];
-        return firstLine;
-        }
-      jobPoster = removeAfterLineBreak(jobPoster);
-      jobPoster = retainContactPersonName(jobPoster);
+    // Helper function to evaluate XPath (needs to be redefined in this scope)
+    function getElementByXPath(xpath) {
+      return document.evaluate(xpath, document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue;
+    }
+
+    // Use XPath selectors for more reliable element selection
+    let jobTitleElement = getElementByXPath('/html/body/div/section[1]/div/div/div/h1');
+    let jobTitle = jobTitleElement?.innerText || "";
+
+    let hoursElement = getElementByXPath('/html/body/div/section[2]/div/div[1]/div/div/div[3]/dl/dd/p');
+    let hoursPerWeek = hoursElement?.innerText || "";
+
+    let salaryElement = getElementByXPath('/html/body/div/section[2]/div/div[1]/div/div/div[2]/dl/dd/p');
+    let salaryUpTo = salaryElement?.innerText || "";
+
+    let contactElement = getElementByXPath('/html/body/div/section[2]/div/div[3]/div/div/div[2]/p[1]/strong');
+    let jobPoster = contactElement?.innerText || "";
+
     let jobLink = window.location.href;
+
+    // Log extracted data for debugging
+    console.log("OLJ Extracted Data:");
+    console.log("Job Title:", jobTitle);
+    console.log("Hours:", hoursPerWeek);
+    console.log("Salary:", salaryUpTo);
+    console.log("Contact:", jobPoster);
+    console.log("Link:", jobLink);
     
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
-    }
+  }
 
   // ##### FROM INDEED CODE BLOCK ##### //
   function isFromIndeed() {
@@ -158,7 +173,7 @@ function getJobDetails() {
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
 
-  // ##### FROM UPWROK CODE BLOCK ##### //
+  // ##### FROM UPWORK CODE BLOCK ##### //
   function isFromUpwork() {
     let jobTitle = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div > section:nth-child(1)")?.innerText || "";
     jobTitle = jobTitle.split("\n")[0]
@@ -192,7 +207,6 @@ function getJobDetails() {
     salaryUpTo = salaryUpTo.substring(salaryUpTo.length - 20)
     salaryUpTo = salaryUpTo.match(/[^\D.]+(?:\.\d*)?/g).join('');
 
-
     let jobPoster = document.querySelector("#main > div.container > div:nth-child(4) > div > div > div.job-details-card.d-flex.gap-0.air3-card.air3-card-outline.p-0 > div.sidebar.air3-card-sections > section")?.innerText || "";
     jobPoster = jobPoster.substring(jobPoster.length - 35).split('\n')[1]
     let jobLink = window.location.href;
@@ -202,9 +216,9 @@ function getJobDetails() {
     
     return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
     }
-  }
+}
 
-  // ##### BUTTONS CODE BLOCK ##### //
+// ##### BUTTONS CODE BLOCK ##### //
 const contactAuthor = document.getElementById("contactAuthor");
 const reviewExtension = document.getElementById("reviewExtension");
 const getSpreadsheetTemplate = document.getElementById("spreadsheetTemplate");
@@ -222,5 +236,5 @@ function openNewTabReviewExtension() {
 }
 
 function openNewTabGetSpreadsheetTemplate() {
-  window.open("https://docs.google.com/spreadsheets/d/1BCd1tkmh_4Ia8SOq-MlVj1NimTvoomClr7FMOPm0Gzo/edit?gid=0#gid=0"), "_blank"
+  window.open("https://docs.google.com/spreadsheets/d/1BCd1tkmh_4Ia8SOq-MlVj1NimTvoomClr7FMOPm0Gzo/edit?gid=0#gid=0", "_blank")
 }
