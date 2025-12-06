@@ -223,12 +223,12 @@ function isFromIndeed() {
 
   // Job Title selectors (new primary selector + fallbacks)
   let jobTitleSelectors = [
-    { type: 'xpath', value: '/html/body/div/div[2]/div[3]/div/div/div[1]/div[2]/div[1]/div[1]/h1' },
-    { type: 'css', value: '#viewJobSSRRoot > div.fastviewjob.jobsearch-ViewJobLayout--standalone.css-81tydb.eu4oa1w0.hydrated > div.css-1yuy2sm.eu4oa1w0 > div > div > div.jobsearch-JobComponent.css-9wkwdm.eu4oa1w0.jobsearch-JobComponent-bottomDivider > div.jobsearch-InfoHeaderContainer.jobsearch-DesktopStickyContainer.css-ituda8.eu4oa1w0 > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-1u3gzh9.eu4oa1w0 > h1' },
-    { type: 'css', value: 'h1.jobsearch-JobInfoHeader-title' },
-    { type: 'css', value: 'h1[data-testid="jobsearch-JobInfoHeader-title"]' },
+    { type: 'xpath', value: '/html/body/div[2]/div/div/div/span/div[4]/div[5]/div/section/div/div/div[2]/div[2]/div[1]/div/div[1]/div[1]/h2/span' },
+    { type: 'css', value: '#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1hce1u2.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-k5qkgm.eu4oa1w0 > div.jobsearch-HeaderContainer.css-86m7cf.eu4oa1w0 > div > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-1u3gzh9.eu4oa1w0 > h2 > span' },
+    { type: 'css', value: 'h2.jobsearch-JobInfoHeader-title' },
+    { type: 'css', value: 'h2[data-testid="jobsearch-JobInfoHeader-title"]' },
     // Fallback to old selectors
-    { type: 'css', value: "#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1s5gqtr.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-17riagq.eu4oa1w0 > div.jobsearch-HeaderContainer.css-n78gek.eu4oa1w0 > div > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-bbq8li.eu4oa1w0 > h2" }
+    { type: 'css', value: "#vjs-container > div > div.fastviewjob.jobsearch-ViewJobLayout--embedded.css-1hce1u2.eu4oa1w0.hydrated > div.jobsearch-JobComponent.css-k5qkgm.eu4oa1w0 > div.jobsearch-HeaderContainer.css-86m7cf.eu4oa1w0 > div > div:nth-child(1) > div.jobsearch-JobInfoHeader-title-container.css-1u3gzh9.eu4oa1w0 > h2 > span" }
   ];
   
   let jobTitleElement = getElementWithFallbacks(jobTitleSelectors);
