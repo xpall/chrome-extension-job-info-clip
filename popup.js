@@ -134,11 +134,11 @@ function getJobDetails() {
       jobPoster = contactElement.innerText.trim();
     }
     
-    // Strategy 2: Look for paragraph with "Contact Person:" text and extract strong element
+    // Strategy 2: Look for paragraph with "Business or Contact Name:" text and extract strong element
     if (!jobPoster) {
       let contactParagraphs = document.querySelectorAll('p.mb-2');
       for (let p of contactParagraphs) {
-        if (p.innerText && p.innerText.includes('Contact Person:')) {
+        if (p.innerText && p.innerText.includes('Business or Contact Name:')) {
           let strongElement = p.querySelector('strong');
           if (strongElement) {
             jobPoster = strongElement.innerText.trim();
@@ -148,14 +148,14 @@ function getJobDetails() {
       }
     }
     
-    // Strategy 3: Broader search for any element containing "Contact Person:"
+    // Strategy 3: Broader search for any element containing "Business or Contact Name:"
     if (!jobPoster) {
       let allElements = document.querySelectorAll('*');
       for (let element of allElements) {
-        if (element.innerText && element.innerText.includes('Contact Person:')) {
-          // Try to extract just the name after "Contact Person:"
+        if (element.innerText && element.innerText.includes('Business or Contact Name:')) {
+          // Try to extract just the name after "Business or Contact Name:"
           let text = element.innerText;
-          let match = text.match(/Contact Person:\s*(.+?)(?:\n|$)/);
+          let match = text.match(/Business or Contact Name:\s*(.+?)(?:\n|$)/);
           if (match && match[1]) {
             jobPoster = match[1].trim();
             break;
