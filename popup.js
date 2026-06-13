@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, (results) => {
       if (results[0].result) {
         let data = results[0].result;
-        let csvContent = `${data.job_title}\t${data.hours_per_week}\t${data.salary_up_to}\t${data.job_poster}\t${data.job_link}`;
+        let csvContent = `${data.job_title}\t${data.hours_per_week}\t${data.salary_up_to}\t${data.job_poster}\t${data.member_since}\t${data.job_link}`;
         
         // Copy to clipboard
         navigator.clipboard.writeText(csvContent).then(function() {
@@ -22,6 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const insertHours = document.getElementById('hours');
         const insertCompensation = document.getElementById('compensation');
         const insertContactPerson = document.getElementById('contactPerson');
+        const insertMemberSince = document.getElementById('memberSince');
         const insertLink = document.getElementById('link');
 
         // Change active platform logo
@@ -33,6 +34,7 @@ document.addEventListener('DOMContentLoaded', function() {
         insertHours.innerText = data.hours_per_week;
         insertCompensation.innerText = data.salary_up_to;
         insertContactPerson.innerText = data.job_poster;
+        insertMemberSince.innerText = data.member_since || "";
         insertLink.innerText = data.job_link;
 
         // Extract platform name
@@ -185,6 +187,49 @@ function getJobDetails() {
       }
     }
 
+    // Member since extraction with multiple strategies
+    let memberSince = "";
+
+    // Strategy 1: Try XPath for direct strong element
+    let memberSinceElement = getElementByXPath('/html/body/div/section[2]/div/div[4]/div/div/div[2]/p[2]/strong');
+    if (memberSinceElement && memberSinceElement.innerText) {
+      memberSince = memberSinceElement.innerText.trim();
+    }
+
+    // Strategy 2: Look for paragraph/element with "Member since:" text and extract strong element
+    if (!memberSince) {
+      let memberParagraphs = document.querySelectorAll('p.mb-2');
+      for (let p of memberParagraphs) {
+        if (p.innerText && p.innerText.includes('Member since:')) {
+          let strongElement = p.querySelector('strong');
+          if (strongElement) {
+            memberSince = strongElement.innerText.trim();
+            break;
+          }
+        }
+      }
+    }
+
+    // Strategy 3: Broader search for any element containing "Member since:"
+    if (!memberSince) {
+      let allElements = document.querySelectorAll('*');
+      for (let element of allElements) {
+        if (element.innerText && element.innerText.includes('Member since:')) {
+          let text = element.innerText;
+          let match = text.match(/Member since:\s*(.+?)(?:\n|$)/);
+          if (match && match[1]) {
+            memberSince = match[1].trim();
+            break;
+          }
+          let strongElement = element.querySelector('strong');
+          if (strongElement) {
+            memberSince = strongElement.innerText.trim();
+            break;
+          }
+        }
+      }
+    }
+
     let jobLink = window.location.href;
 
     // Log extracted data for debugging
@@ -193,9 +238,10 @@ function getJobDetails() {
     console.log("Hours:", hoursPerWeek);
     console.log("Salary:", salaryUpTo);
     console.log("Contact:", jobPoster);
+    console.log("Member since:", memberSince);
     console.log("Link:", jobLink);
     
-    return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, job_link: jobLink };
+    return { job_title: jobTitle, hours_per_week: hoursPerWeek, salary_up_to: salaryUpTo, job_poster: jobPoster, member_since: memberSince, job_link: jobLink };
   }
 
   // ##### FROM INDEED CODE BLOCK - UPDATED WITH NEW SELECTORS ##### //
@@ -351,6 +397,7 @@ function isFromIndeed() {
     hours_per_week: hoursPerWeek, 
     salary_up_to: salaryUpTo, 
     job_poster: jobPoster, 
+    member_since: "",
     job_link: jobLink 
   };
 }
@@ -513,6 +560,7 @@ function isFromIndeed() {
       hours_per_week: hoursPerWeek, 
       salary_up_to: salaryUpTo, 
       job_poster: jobPoster, 
+      member_since: "",
       job_link: jobLink 
     };
   }
